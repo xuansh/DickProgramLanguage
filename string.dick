@@ -1,0 +1,7 @@
+str = "hello"
+str1 = " "
+str2 = "world"
+str3 = "!"
+
+rzt = str str1 + str2 + str3 +
+print rzt
