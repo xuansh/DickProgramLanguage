@@ -58,13 +58,11 @@ class Ev:
 
     def ev_match(self, lines):
         tempStack = []
-
         for i, line in enumerate(lines):
             tag = line.split(maxsplit=1)[0]
             if tag in self.keyWord:
                 if tag == 'end':
                     startIdx = tempStack.pop()
-
                     self.matchMap[startIdx] = i
                     self.matchMap[i] = startIdx
                 else:
