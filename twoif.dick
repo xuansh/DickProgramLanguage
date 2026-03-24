@@ -1,0 +1,8 @@
+i = 1
+j = i -> toChar
+print j
+
+k = "the num is "
+print k j +
+
+print "the num is " j +
