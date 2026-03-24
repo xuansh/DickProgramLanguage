@@ -20,7 +20,7 @@ class Ev:
 
         for line in raw_lines:
             stripped = line.strip()
-            if not stripped:                # 空行
+            if not stripped:                 # 空行
                 continue
             if stripped.startswith('#'):     # 整行注释
                 continue

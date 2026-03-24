@@ -32,3 +32,6 @@ print c
 # some sample function
 k = c -> toChar
 print "the result is " k +
+
+# the toChar OperatingCmd also can on print
+print "on print about toChar" c -> toChar +
