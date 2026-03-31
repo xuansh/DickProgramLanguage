@@ -70,4 +70,4 @@ class Ev:
             return _str[1:-1]
         return ""
 
-Ev().ev(open(sys.argv[1]).read())
+Ev().ev(open(sys.argv[1], encoding='utf-8').read())
