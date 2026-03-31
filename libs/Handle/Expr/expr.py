@@ -72,7 +72,7 @@ class Expr:
                                 er.errException(2, "no value for SQL operation", pgCounter, self.lines[pgCounter])
                             stc = stack.pop()
                             # 修复：调用SQL实例方法，不传self，接收返回值并压栈
-                            res = self.sql_instance.handleStc(stc, lib_op)
+                            res = self.sql_instance.handleStc(stc, lib_op, pgCounter)
                             stack.append(res)
                         case _:
                             er.errException(3, f"unknown library {lib}", pgCounter, self.lines[pgCounter])

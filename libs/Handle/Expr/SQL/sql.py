@@ -1,41 +1,69 @@
-# OperateSys/libs/Handle/Expr/SQL/sql.py
 import sqlite3
+import error as er
 
-# 补充类定义（原代码缺少类，__init__和handleStc无归属）
+
 class SQLHandler:
     def __init__(self):
-        self.conn = ''
-        self.cursor = ''
+        self.conn = None
+        self.cursor = None
 
-    def handleStc(self, stc, operatingMethod):
-        match operatingMethod:
-            case 'Conn':
-                conn_name = stc
-                self.conn = sqlite3.connect(conn_name)  # 连接数据库
+    def handleStc(self, stc: str, operatingMethod: str, pgCounter: int):
+        """
+        处理 SQL 相关指令
+        :param stc: SQL 语句或数据库名称
+        :param operatingMethod: 操作类型
+        :param pgCounter: 错误处理所需的行计数器
+        """
+        try:
+            match operatingMethod:
+                case 'Conn':
+                    # 关闭旧连接（如果存在）
+                    if self.conn:
+                        self.conn.close()
+                    self.conn = sqlite3.connect(stc)
+                    return True
 
-            case 'Execute':
-                if not self.conn:  # 增加连接校验
-                    raise Exception("SQL connection not initialized")
-                self.cursor = self.conn.cursor()
-                self.cursor.execute(stc)
+                case 'Execute':
+                    if not self.conn:
+                        return er.errException(4, "No active connection", pgCounter, stc)
 
-            case 'Fetchall':
-                if not self.cursor:
-                    raise Exception("SQL cursor not initialized")
-                rows = self.cursor.fetchall()  # 返回查询结果
-                for row in rows:
-                    print(row)
-                return True
+                    # 建议每次执行重新获取 cursor 以保证最新状态
+                    self.cursor = self.conn.cursor()
+                    self.cursor.execute(stc)
+                    return True
 
-            case 'Commit':
-                return self.conn.commit()
+                case 'Fetchall':
+                    if not self.cursor:
+                        return er.errException(4, "No active cursor (Execute SQL first)", pgCounter, stc)
 
-            case 'Close':
-                if self.conn:
-                    self.conn.close()  # 修正重复close的问题
-                    self.conn = ''  # 重置连接
+                    results = self.cursor.fetchall()
+                    # 这里的逻辑建议：返回结果给调用者，而不是直接打印
+                    return results
 
-            case _:
-                return None
+                case 'Commit':
+                    if self.conn:
+                        self.conn.commit()
+                        return True
+                    return er.errException(4, "Commit failed: No connection", pgCounter, stc)
 
-        return True
+                case 'Close':
+                    if self.cursor:
+                        self.cursor.close()
+                        self.cursor = None
+                    if self.conn:
+                        self.conn.close()
+                        self.conn = None
+                    return True
+
+                case _:
+                    return er.errException(4, f"Unknown method: {operatingMethod}", pgCounter, stc)
+
+        except sqlite3.Error as e:
+            # 如果是执行阶段出错，尝试回滚
+            if self.conn and operatingMethod in ['Execute', 'Commit']:
+                self.conn.rollback()
+            # 将具体的 SQL 错误传给错误处理模块
+            return er.errException(4, f"SQL Error: {str(e)}", pgCounter, stc)
+
+        except Exception as e:
+            return er.errException(4, f"System Error: {str(e)}", pgCounter, stc)
