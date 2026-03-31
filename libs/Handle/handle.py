@@ -17,6 +17,8 @@ class Handle:
                 else:
                     pgCounter = self.matchMap[pgCounter]
                     pgCounter += 1
+            case 'for': ...
+
             case 'end':
                 matchKeyWord = lines[self.matchMap[pgCounter]].split(maxsplit=1)[0]
                 if matchKeyWord == 'while':

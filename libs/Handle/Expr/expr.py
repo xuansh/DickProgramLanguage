@@ -1,5 +1,6 @@
 import shlex
 import error as er
+import libs.Handle.Expr.SQL.sql as DickSQL
 
 class Expr:
     def __init__(self,var_dict,lines_dict):
@@ -53,7 +54,15 @@ class Expr:
                     else:               stack.append(0)
             elif token == '->':
                 operatingMethod = tokens[i + 1]
-                if operatingMethod == 'toChar':
+                if '.' in operatingMethod:
+                    lib = operatingMethod.split('.')[0]
+                    libin_operatingMethod = operatingMethod.split('.')[1]
+                    match lib:
+                        case 'sql':
+                            stc = stack.pop()
+                            value = DickSQL.handleStc(self, stc, libin_operatingMethod)
+
+                elif operatingMethod == 'toChar':
                     _str = stack.pop()
                     stack.append(str(_str))
                     i += 1
@@ -76,5 +85,7 @@ class Expr:
                 stc = self.lines[pgCounter]
                 er.errException(3, f"name {token} is not defined", pgCounter, stc)
             i += 1
+
         return stack[0]
+
 

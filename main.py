@@ -8,6 +8,7 @@ class Ev:
         self.operator = ['+', '-', '*', '/', '>', '<', '>=', '<=', '==', '!=', '->']
         self.keyWord = ['while', 'if', 'end']
         self.typeWord = ['int', 'str', 'float', 'bool']
+        self.SQLFunc = ['SQLExecute']
         self.stdFunc = ['print']
         self.varActing = ['\"']
         self.lines = []
@@ -40,6 +41,8 @@ class Ev:
                 pgCounter = self.handle.keyword(pgCounter, self.lines, namespace)
             elif tag in self.stdFunc:
                 pgCounter = self.handle.stdfunc(pgCounter, self.lines, namespace)
+            #elif tag in self.SQLWord:
+            #    pgCounter = self
             else:
                 pgCounter = self.handle.assign(pgCounter, self.lines, namespace)
 
