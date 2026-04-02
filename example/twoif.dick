@@ -1,9 +1,0 @@
-dbName = "test.db"
-
-tmp = dbName -> sql.Conn
-
-tmp = "CREATE TABLE EMP(E CHAR(20) PRIMARY KEY, Ename CHAR(50), Eage INT, Esalary INT )" -> sql.Execute
-tmp = "C"
-
-tmp = dbName -> sql.Commit
-tmp = dbName -> sql.Close

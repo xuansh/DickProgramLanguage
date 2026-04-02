@@ -1,4 +1,0 @@
-dbName = 'test.db'
-k = dbName -> sql.Conn
-
-k = "CREATE TABLE Student(Sno CHAR(20)) ewdwfefef" -> sql.Execute

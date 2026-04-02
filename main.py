@@ -6,7 +6,7 @@ class Ev:
 
     def __init__(self):
         self.operator = ['+', '-', '*', '/', '>', '<', '>=', '<=', '==', '!=', '->']
-        self.keyWord = ['while', 'if', 'end']
+        self.keyWord = ['while', 'if', 'end', 'import']
         self.typeWord = ['int', 'str', 'float', 'bool']
         self.SQLFunc = ['SQLExecute']
         self.stdFunc = ['print']
@@ -14,7 +14,10 @@ class Ev:
         self.lines = []
         self.matchMap = {}
         self.vars = {}
-        self.handle = Handle(self.vars, self.matchMap, self.typeWord, self.lines)
+        self.libMap = {
+            'SQL': 'libs.Handle.Expr.SQL'
+        }
+        self.handle = Handle(self.vars, self.matchMap, self.typeWord, self.lines, self.libMap)
 
     def ev(self, scp, namespace=None):
         raw_lines = scp.split('\n')

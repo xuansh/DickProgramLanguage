@@ -1,16 +1,16 @@
 import shlex
+
 import error as er
 # 先修复sql.py后再导入，此处先调整调用逻辑
-import libs.Handle.Expr.SQL.sql as DickSQL
 
 
 class Expr:
-    def __init__(self, var_dict, lines_dict):
+    def __init__(self, var_dict, lines_dict, quote_lib_dict, libmap_dict):
         self.vars = var_dict
         self.operator = ['+', '-', '*', '/', '>', '<', '>=', '<=', '==', '!=']
         self.lines = lines_dict
-        # 初始化SQL实例（需先修复sql.py）
-        self.sql_instance = DickSQL.SQLHandler()
+        self.quote_word = quote_lib_dict
+        self.libMap = libmap_dict
 
     def eval(self, line, pgCounter):
         stack = []
@@ -66,18 +66,18 @@ class Expr:
                 if '.' in operatingMethod:
                     # 拆分库和方法（仅拆分一次，避免多小数点问题）
                     lib, lib_op = operatingMethod.split('.', 1)
-                    match lib:
-                        case 'sql':
-                            if not stack:
-                                er.errException(2, "no value for SQL operation", pgCounter, self.lines[pgCounter])
-                            stc = stack.pop()
-                            # 修复：调用SQL实例方法，不传self，接收返回值并压栈
-                            res = self.sql_instance.handleStc(stc, lib_op, pgCounter)
-                            stack.append(res)
-                        case _:
-                            er.errException(3, f"unknown library {lib}", pgCounter, self.lines[pgCounter])
-                    # 修复：跳过已处理的method token
+                    if self.quote_word[lib] in self.libMap:
+                        import importlib
+                        module_path = self.libMap[self.quote_word[lib]]
+                        module = importlib.import_module(module_path)
+                        setattr(self, self.quote_word[lib], module)
+                        if not stack:
+                            er.errException(2, f"no value for {self.quote_word[lib]} operation", pgCounter, self.lines[pgCounter])
+                        stc = stack.pop()
+                        res = module.Lib_find(self, stc, lib_op, pgCounter)
+                        stack.append(res)
                     i += 1
+                # 后面这两个operatingMethod或许也需要封装成模块或者库
                 elif operatingMethod == 'toChar':
                     if not stack:
                         er.errException(2, "no value for toChar", pgCounter, self.lines[pgCounter])

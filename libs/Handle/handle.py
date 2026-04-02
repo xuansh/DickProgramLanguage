@@ -1,4 +1,3 @@
-import sys
 import re
 
 from libs.Handle.Expr.expr import Expr
@@ -15,7 +14,7 @@ class Handle:
         self.quoteLib = {}
         self.expr = Expr(self.vars, self.lines, self.quoteLib, self.libMap)
 
-    def keyword(self, pgCounter, lines, namespace) -> int:
+    def keyword(self, pgCounter, lines, _namespace) -> int:
         match lines[pgCounter].split(maxsplit=1)[0]:
 
             case 'import': #import SQL as sql
@@ -55,20 +54,19 @@ class Handle:
             # 报错 whdwhduiwhdiuwuh
         return pgCounter
 
-    def assign(self, pgCounter, lines, namespace) -> int:
+    def assign(self, pgCounter, lines, _namespace) -> int:
         stc = lines[pgCounter].strip()
 
-        # 优先处理 "表达式 -> 操作"，避免 split 被字符串内空格干扰
-        if '->' in stc:
-            left, right = stc.rsplit('->', 1)
-            left = left.strip()
-            right = right.strip()
-            if left and right:
-                self.expr.eval(stc, pgCounter)
+        # 先处理 "name : type = expr"
+        type_match = re.match(r'^([^:\s]+)\s*:\s*([^=\s]+)\s*=\s*(.+)', stc)
+        if type_match:
+            name, var_type, expr = type_match.groups()
+            if var_type in self.typeWord:
+                self.vars[name] = self.expr.eval(expr, pgCounter)
                 pgCounter += 1
                 return pgCounter
 
-        # 其次处理 "name = expr"
+        # 再处理 "name = expr"（expr 内允许出现 ->）
         if '=' in stc:
             name, expr = stc.split('=', 1)
             name = name.strip()
@@ -78,12 +76,13 @@ class Handle:
                 pgCounter += 1
                 return pgCounter
 
-        # 最后处理 "name : type = expr"
-        type_match = re.match(r'^([^:\s]+)\s*:\s*([^=\s]+)\s*=\s*(.+)', stc)
-        if type_match:
-            name, var_type, expr = type_match.groups()
-            if var_type in self.typeWord:
-                self.vars[name] = self.expr.eval(expr, pgCounter)
+        # 最后处理独立表达式 "expr -> 操作"
+        if '->' in stc:
+            left, right = stc.rsplit('->', 1)
+            left = left.strip()
+            right = right.strip()
+            if left and right:
+                self.expr.eval(stc, pgCounter)
                 pgCounter += 1
                 return pgCounter
 
@@ -91,7 +90,7 @@ class Handle:
         pgCounter += 1
         return pgCounter
 
-    def stdfunc(self, pgCounter, lines, namespace):
+    def stdfunc(self, pgCounter, lines, _namespace):
         match lines[pgCounter].split(maxsplit=1)[0]:
             case 'print': # print i
                 printStr = lines[pgCounter].split(maxsplit=1)[1]
