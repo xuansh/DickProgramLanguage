@@ -15,7 +15,8 @@ class Ev:
         self.matchMap = {}
         self.vars = {}
         self.libMap = {
-            'SQL': 'libs.Handle.Expr.SQL'
+            'SQL': 'libs.Handle.Expr.SQL',
+            'System': 'libs.Handle.Expr.System'
         }
         self.handle = Handle(self.vars, self.matchMap, self.typeWord, self.lines, self.libMap)
 

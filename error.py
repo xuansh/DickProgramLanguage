@@ -5,7 +5,9 @@ Error_TYPE = {
     2: 'SyntaxError',
     3: 'NameError',
     4: 'SQLError',
-    5: 'ModuleNotFoundError'
+    5: 'ModuleNotFoundError',
+    6: 'AttributeError',
+    1000: 'UnknownError',
 }
 
 def errException(error_index : int, text :str, pgCounter : int, line : str):

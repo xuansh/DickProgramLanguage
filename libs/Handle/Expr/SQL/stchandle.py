@@ -57,14 +57,14 @@ class STCHandler:
                     return True
 
                 case _:
-                    return er.errException(4, f"Unknown method: {operatingMethod}", pgCounter, stc)
+                    return er.errException(6, f"module 'SQL' has no attribute '{operatingMethod}'", pgCounter, stc)
 
         except sqlite3.Error as e:
             # 如果是执行阶段出错，尝试回滚
             if self.conn and operatingMethod in ['Execute', 'Commit']:
                 self.conn.rollback()
             # 将具体的 SQL 错误传给错误处理模块
-            return er.errException(4, f"SQL Error: {str(e)}", pgCounter, stc)
+            return er.errException(4, f"{str(e)}", pgCounter, stc)
 
         except Exception as e:
             return er.errException(4, f"System Error: {str(e)}", pgCounter, stc)

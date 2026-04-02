@@ -29,6 +29,8 @@ class Handle:
                 match lib:
                     case 'SQL':
                         lib_path = Path(__file__).parent / 'Expr' / 'SQL' / '__init__.py'
+                    case 'System':
+                        lib_path = Path(__file__).parent / 'Expr' / 'System' / '__init__.py'
                     case _:
                         er.errException(5, f"No module named '{lib}'", pgCounter, lines[pgCounter])
                         # 报错 找不到该库
