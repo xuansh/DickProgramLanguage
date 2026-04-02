@@ -35,3 +35,15 @@ print "the result is " k +
 
 # the toChar OperatingCmd also can on print
 print "on print about toChar :" c -> toChar +
+
+# | -- Lib
+# | ----- SQL
+
+# SQL :
+import SQL as sql
+"test.db" -> sql.Conn
+"CREATE TABLE Student (Sno CHAR(20))" -> sql.Execute
+"INSERT INTO Student (Sno) VALUES ('240001')" -> sql.Execute
+"SELECT * FROM Student" -> sql.Execute
+"" -> sql.Fetchall
+# if U wanna know why there is a pair of double quotation before "sql.Fetchall", to be honest, i dont know too, cuz it doesnt errors when there is
