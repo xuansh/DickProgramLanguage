@@ -8,14 +8,12 @@ class Ev:
         self.operator = ['+', '-', '*', '/', '>', '<', '>=', '<=', '==', '!=', '->']
         self.keyWord = ['while', 'if', 'end', 'import']
         self.typeWord = ['int', 'str', 'float', 'bool']
-        self.SQLFunc = ['SQLExecute']
         self.stdFunc = ['print']
         self.varActing = ['\"']
         self.lines = []
         self.matchMap = {}
         self.vars = {}
         self.libMap = {
-            'SQL': 'libs.Handle.Expr.SQL',
             'System': 'libs.Handle.Expr.System'
         }
         self.handle = Handle(self.vars, self.matchMap, self.typeWord, self.lines, self.libMap)

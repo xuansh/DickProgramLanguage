@@ -27,8 +27,6 @@ class Handle:
                 else:
                     lib = lib_name = pure_lib
                 match lib:
-                    case 'SQL':
-                        lib_path = Path(__file__).parent / 'Expr' / 'SQL' / '__init__.py'
                     case 'System':
                         lib_path = Path(__file__).parent / 'Expr' / 'System' / '__init__.py'
                     case _:
